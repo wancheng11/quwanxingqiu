@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品详情</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        /* 头部导航 */
+        .header {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            padding: 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            margin-right: 16px;
+        }
+
+        /* 商品详情 */
+        .product-container {
+            margin-top: 60px;
+            padding: 16px;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .product-info {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .product-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            color: #ff4d4f;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .product-price i {
+            color: #ffd700;
+            font-size: 20px;
+        }
+
+        .product-description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        /* 规格选择 */
+        .specs-section {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .specs-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .specs-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .spec-option {
+            padding: 8px 16px;
+            border: 1px solid #eee;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .spec-option.selected {
+            background: #3f51b5;
+            color: white;
+            border-color: #3f51b5;
+        }
+
+        /* 底部购买栏 */
+        .bottom-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .price-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .current-price {
+            color: #ff4d4f;
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .buy-btn {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* 支付弹窗 */
+        .payment-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .payment-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 320px;
+            padding: 24px;
+        }
+
+        .payment-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .payment-amount {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: #ff4d4f;
+            margin-bottom: 24px;
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .payment-method.selected {
+            border-color: #3f51b5;
+            background: #f0f2ff;
+        }
+
+        .method-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 12px;
+        }
+
+        .method-name {
+            flex: 1;
+            font-size: 15px;
+        }
+
+        .confirm-payment {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="javascript:history.back()" class="back-btn">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h1>商品详情</h1>
+    </div>
+
+    <div class="product-container">
+        <img src="product-image.jpg" alt="商品图片" class="product-image">
+        
+        <div class="product-info">
+            <h2 class="product-title">趣玩专属表情包</h2>
+            <div class="product-price">
+                <i class="fas fa-coins"></i>
+                <span>100</span>
+            </div>
+            <p class="product-description">
+                解锁专属表情包，让你的互动更有趣！包含多个精美表情，支持在聊天中使用。
+            </p>
+        </div>
+
+        <div class="specs-section">
+            <h3 class="specs-title">规格选择</h3>
+            <div class="specs-options">
+                <div class="spec-option selected">基础版</div>
+                <div class="spec-option">进阶版</div>
+                <div class="spec-option">豪华版</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-bar">
+        <div class="price-section">
+            <div class="current-price">
+                <i class="fas fa-coins"></i>
+                <span>100</span>
+            </div>
+        </div>
+        <button class="buy-btn" onclick="showPayment()">立即购买</button>
+    </div>
+
+    <!-- 支付弹窗 -->
+    <div class="payment-modal" id="paymentModal">
+        <div class="payment-content">
+            <h3 class="payment-title">确认支付</h3>
+            <div class="payment-amount">
+                <i class="fas fa-coins"></i>
+                <span>100</span>
+            </div>
+            <div class="payment-methods">
+                <div class="payment-method selected" onclick="selectPaymentMethod(this)">
+                    <img src="wallet-icon.png" alt="钱包支付" class="method-icon">
+                    <span class="method-name">趣玩币支付</span>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod(this)">
+                    <img src="wechat-icon.png" alt="微信支付" class="method-icon">
+                    <span class="method-name">微信支付</span>
+                </div>
+                <div class="payment-method" onclick="selectPaymentMethod(this)">
+                    <img src="alipay-icon.png" alt="支付宝支付" class="method-icon">
+                    <span class="method-name">支付宝支付</span>
+                </div>
+            </div>
+            <button class="confirm-payment" onclick="confirmPayment()">确认支付</button>
+        </div>
+    </div>
+
+    <script>
+        // 选择规格
+        document.querySelectorAll('.spec-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelector('.spec-option.selected').classList.remove('selected');
+                this.classList.add('selected');
+            });
+        });
+
+        // 显示支付弹窗
+        function showPayment() {
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+
+        // 选择支付方式
+        function selectPaymentMethod(element) {
+            document.querySelector('.payment-method.selected').classList.remove('selected');
+            element.classList.add('selected');
+        }
+
+        // 页面加载时获取商品信息
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从localStorage获取商品信息
+            const productInfo = JSON.parse(localStorage.getItem('currentProduct'));
+            if (productInfo) {
+                // 更新商品详情
+                document.querySelector('.product-title').textContent = productInfo.name;
+                document.querySelector('.product-image').src = productInfo.image;
+                document.querySelector('.current-price span').textContent = productInfo.price;
+                
+                // 根据商品类型显示不同的内容
+                if (productInfo.type === 'service') {
+                    // 服务类商品显示评分和订单数
+                    document.querySelector('.product-description').innerHTML = `
+                        <div class="service-stats">
+                            <div class="rating">评分：${productInfo.rating}分</div>
+                            <div class="orders">接单数：${productInfo.orders}</div>
+                        </div>
+                        <div class="service-tags">
+                            ${productInfo.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}
+                        </div>
+                    `;
+                }
+            }
+        });
+
+        // 修改确认支付函数
+        function confirmPayment() {
+            const productInfo = JSON.parse(localStorage.getItem('currentProduct'));
+            
+            // 创建订单对象
+            const order = {
+                id: generateOrderId(),
+                productName: productInfo.name,
+                price: parseInt(productInfo.price),
+                spec: document.querySelector('.spec-option.selected').textContent,
+                date: new Date().toISOString(),
+                status: 'paid',
+                image: productInfo.image,
+                type: productInfo.type
+            };
+
+            // 保存订单到本地存储
+            saveOrder(order);
+
+            // 关闭支付弹窗
+            document.getElementById('paymentModal').style.display = 'none';
+            
+            // 跳转到订单详情页
+            window.location.href = `order_detail.html?orderId=${order.id}`;
+        }
+
+        // 生成订单ID
+        function generateOrderId() {
+            return 'ORDER' + Date.now() + Math.floor(Math.random() * 1000);
+        }
+
+        // 保存订单到本地存储
+        function saveOrder(order) {
+            let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+        }
+
+        // 点击遮罩层关闭支付弹窗
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html> 

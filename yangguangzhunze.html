@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>阳光平台准则</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft Yahei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f7f7f7;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            padding: 16px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .header .back-btn {
+            position: absolute;
+            left: 16px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .container {
+            padding: 76px 16px 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .tab-container {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 16px;
+        }
+
+        .tab-header {
+            display: flex;
+            overflow-x: auto;
+            background: #fff;
+            padding: 8px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            border-bottom: 1px solid #eef0ff;
+        }
+
+        .tab-header::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab-item {
+            flex: 0 0 auto;
+            padding: 12px 20px;
+            font-size: 15px;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            position: relative;
+            transition: all 0.3s ease;
+            border-radius: 24px;
+            margin: 0 4px;
+        }
+
+        .tab-item i {
+            font-size: 16px;
+        }
+
+        .tab-item.active {
+            color: #3f51b5;
+            font-weight: 500;
+            background: #f0f2ff;
+        }
+
+        .tab-content {
+            padding: 20px;
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .rule-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .rule-list li {
+            position: relative;
+            padding: 16px 0 16px 36px;
+            border-bottom: 1px solid #f5f5f5;
+            color: #666;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        .rule-list li:last-child {
+            border-bottom: none;
+        }
+
+        .rule-list li::before {
+            content: '\f058';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: #3f51b5;
+            position: absolute;
+            left: 0;
+            top: 16px;
+            font-size: 18px;
+        }
+
+        .sunshine-rules {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #eef0ff;
+        }
+
+        .section-title i {
+            color: #3f51b5;
+            font-size: 24px;
+            background: #f0f2ff;
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, #fff2f0, #fff0f0);
+            border: 1px solid #ffccc7;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #ff4d4f;
+        }
+
+        .commitment-box {
+            background: linear-gradient(135deg, #f0f7ff, #e6f4ff);
+            border: 1px solid #bae0ff;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+            color: #1890ff;
+        }
+
+        .warning-box i, .commitment-box i {
+            margin-right: 12px;
+            font-size: 18px;
+        }
+
+        .warning-box strong, .commitment-box strong {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .warning-box p, .commitment-box p {
+            line-height: 1.8;
+            font-size: 14px;
+            margin-left: 30px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .rule-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="kefuzhongxin.html" class="back-btn">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h1>阳光平台准则</h1>
+    </div>
+
+    <div class="container">
+        <!-- 添加滑动菜单 -->
+        <div class="tab-container">
+            <div class="tab-header">
+                <div class="tab-item active" onclick="switchTab(0)">
+                    <i class="fas fa-gamepad"></i>
+                    游戏陪玩
+                </div>
+                <div class="tab-item" onclick="switchTab(1)">
+                    <i class="fas fa-city"></i>
+                    城市陪玩
+                </div>
+                <div class="tab-item" onclick="switchTab(2)">
+                    <i class="fas fa-store"></i>
+                    本地生活
+                </div>
+                <div class="tab-item" onclick="switchTab(3)">
+                    <i class="fas fa-ticket-alt"></i>
+                    景点门票
+                </div>
+            </div>
+
+            <div class="tab-content">
+                <!-- 游戏陪玩准则 -->
+                <div class="tab-pane active">
+                    <div class="rule-content">
+                        <ul class="rule-list">
+                            <li>陪玩过程中保持积极健康的沟通氛围</li>
+                            <li>禁止在游戏中使用外挂等作弊手段</li>
+                            <li>不得在游戏中发布违规广告或进行不当宣传</li>
+                            <li>严禁诱导用户进行游戏充值或其他消费</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 城市陪玩准则 -->
+                <div class="tab-pane">
+                    <div class="rule-content">
+                        <ul class="rule-list">
+                            <li>严格遵守服务时间，不得擅自更改或延长服务时间</li>
+                            <li>仅限公共场所活动，禁止前往私密场所</li>
+                            <li>保持适当社交距离，不得有任何不当身体接触</li>
+                            <li>不得索要或接受用户额外打赏或礼物</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 本地生活准则 -->
+                <div class="tab-pane">
+                    <div class="rule-content">
+                        <ul class="rule-list">
+                            <li>提供的服务必须真实可靠，不得虚假宣传</li>
+                            <li>严格遵守当地法律法规和行业规范</li>
+                            <li>保护用户隐私，不得泄露用户个人信息</li>
+                            <li>不得强制推销或诱导消费其他服务</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 景点门票准则 -->
+                <div class="tab-pane">
+                    <div class="rule-content">
+                        <ul class="rule-list">
+                            <li>门票价格必须透明，不得额外收取隐藏费用</li>
+                            <li>确保门票真实有效，不得销售假票或套票</li>
+                            <li>准确告知景点相关信息和使用须知</li>
+                            <li>提供规范的退改服务和售后保障</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 阳光服务准则 -->
+        <div class="rule-card">
+            <div class="rule-title">
+                <i class="fas fa-user-shield"></i>
+                阳光服务准则
+            </div>
+            <div class="rule-content">
+                <p>所有服务必须遵循以下基本原则：</p>
+                <ul class="rule-list">
+                    <li>严禁任何涉黄、涉毒、涉赌等违法违规行为</li>
+                    <li>所有交易必须通过平台进行，禁止私下交易</li>
+                    <li>不得发布任何违法或不良信息内容</li>
+                    <li>保持阳光、健康、积极的服务态度</li>
+                    <li>遵守平台规则，接受平台监督管理</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 警告和承诺部分 -->
+        <div class="rule-card">
+            <div class="warning-box">
+                <i class="fas fa-exclamation-triangle"></i>
+                <strong>严正声明：</strong>
+                <p>平台对任何违反上述准则的行为采取零容忍态度，一经发现立即永久封禁账号，并保留追究法律责任的权利。</p>
+            </div>
+
+            <div class="commitment-box">
+                <i class="fas fa-check-circle"></i>
+                <strong>平台承诺：</strong>
+                <p>我们承诺为用户提供健康、阳光、安全的服务环境，实行全程订单监控，保障交易安全。欢迎广大用户共同监督，携手创建文明和谐的平台氛围。</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加JavaScript -->
+    <script>
+    function switchTab(index) {
+        // 移除所有active类
+        document.querySelectorAll('.tab-item').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelectorAll('.tab-pane').forEach(pane => {
+            pane.classList.remove('active');
+        });
+
+        // 添加active类到选中的标签
+        document.querySelectorAll('.tab-item')[index].classList.add('active');
+        document.querySelectorAll('.tab-pane')[index].classList.add('active');
+
+        // 滚动到选中的标签
+        document.querySelectorAll('.tab-item')[index].scrollIntoView({
+            behavior: 'smooth',
+            inline: 'center',
+            block: 'nearest'
+        });
+    }
+    </script>
+</body>
+</html> 

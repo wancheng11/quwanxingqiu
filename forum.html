@@ -1,0 +1,2560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>趣玩星球论坛</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft Yahei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f7f7f7;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            padding: 12px 16px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .post-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .post-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* 分类标签 */
+        .category-tabs {
+            display: none;
+        }
+
+        /* 帖子列表 */
+        .container {
+            margin-top: 16px;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        .post-card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .post-card:active {
+            transform: scale(0.98);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .user-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 2px;
+        }
+
+        .post-time {
+            font-size: 12px;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .post-content {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 16px;
+            line-height: 1.6;
+        }
+
+        .post-images {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .post-image {
+            width: 100%;
+            padding-top: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .post-image img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .post-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .post-footer {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #f5f5f5;
+            padding-top: 16px;
+            margin-top: 8px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #666;
+            font-size: 14px;
+            background: none;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn:active {
+            background: #f5f5f5;
+        }
+
+        .action-btn i {
+            font-size: 18px;
+        }
+
+        .action-btn.liked {
+            color: #ff4d4f;
+        }
+
+        /* 发帖弹窗 */
+        .post-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: none;
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .post-form {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 24px 24px 0 0;
+            padding: 24px;
+            animation: slideUp 0.3s ease;
+        }
+
+        .post-textarea {
+            width: 100%;
+            height: 120px;
+            border: none;
+            resize: none;
+            font-size: 16px;
+            margin-bottom: 20px;
+            padding: 0;
+            outline: none;
+        }
+
+        .post-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .tool-btn {
+            color: #666;
+            font-size: 24px;
+            background: none;
+            border: none;
+            padding: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:active {
+            transform: scale(0.9);
+            color: #3f51b5;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            border: none;
+            padding: 10px 28px;
+            border-radius: 24px;
+            font-size: 15px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(63, 81, 181, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 1px 4px rgba(63, 81, 181, 0.1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* 底部导航栏 */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            text-decoration: none;
+            font-size: 12px;
+            gap: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: #3f51b5;
+            font-weight: 500;
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
+        /* 用户等级样式 */
+        .user-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        /* 不同用户等级的颜色 */
+        .user-level.normal {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .user-level.gold {
+            background: #fff7e6;
+            color: #d48806;
+        }
+
+        .user-level.platinum {
+            background: #f0f5ff;
+            color: #2f54eb;
+        }
+
+        .user-level.black-gold {
+            background: #262626;
+            color: #ffd700;
+        }
+
+        /* VIP等级样式 */
+        .vip-level {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        /* VIP等级不同级别的样式 */
+        .vip-level[data-level="1"] {
+            background: #fff7e6;
+            color: #d48806;
+        }
+
+        .vip-level[data-level="2"] {
+            background: #f6ffed;
+            color: #52c41a;
+        }
+
+        .vip-level[data-level="3"] {
+            background: #e6f7ff;
+            color: #1890ff;
+        }
+
+        .vip-level[data-level="4"] {
+            background: #f9f0ff;
+            color: #722ed1;
+        }
+
+        .vip-level[data-level="5"] {
+            background: #fff0f6;
+            color: #eb2f96;
+        }
+
+        .vip-level[data-level="6"] {
+            background: #fff2e8;
+            color: #fa541c;
+        }
+
+        .vip-level[data-level="7"] {
+            background: #f4ffb8;
+            color: #7cb305;
+        }
+
+        .vip-level[data-level="8"] {
+            background: #fcffe6;
+            color: #a0d911;
+        }
+
+        .vip-level[data-level="9"] {
+            background: linear-gradient(45deg, #000000, #1a1a1a);
+            color: #ffd700;
+            border: 1px solid #ffd700;
+        }
+
+        /* 图标样式 */
+        .user-level i,
+        .vip-level i {
+            font-size: 14px;
+            color: inherit;
+        }
+
+        /* 移除所有渐变和背景裁剪相关的样式 */
+        .vip-level[data-level] i {
+            background: none;
+            color: inherit;
+        }
+
+        /* 签到按钮样式 */
+        .sign-in-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin-right: 12px;
+        }
+
+        /* 签到弹窗样式 */
+        .sign-in-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .sign-in-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 360px;
+        }
+
+        /* VIP等级样式 */
+        .vip-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .vip-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            width: 90%;
+            max-width: 360px;
+        }
+
+        .vip-levels {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 16px 0;
+        }
+
+        .vip-level-item {
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .vip-level-item:hover {
+            border-color: #3f51b5;
+            transform: translateY(-2px);
+        }
+
+        .vip-icon {
+            font-size: 18px;
+            font-weight: bold;
+            color: #FF4D4F;
+            margin-bottom: 8px;
+        }
+
+        .vip-benefits {
+            list-style: none;
+            font-size: 12px;
+            color: #666;
+            margin-top: 8px;
+        }
+
+        /* 顶部布局样式 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            padding: 8px;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        /* 用户信息卡片样式优化 */
+        .user-info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-basic {
+            display: flex;
+            gap: 12px;
+        }
+
+        .avatar-wrap {
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-header {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        /* 用户名和徽章容器 */
+        .user-name-badges {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-badges {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* 等级标签样式 */
+        .user-level, .vip-level {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .user-level.gold {
+            background: linear-gradient(45deg, #fff7e6, #fff0f0);
+            color: #d48806;
+            border: 1px solid #ffd8bf;
+        }
+
+        .vip-level[data-level="3"] {
+            background: linear-gradient(45deg, #e6f7ff, #e6fffb);
+            color: #1890ff;
+            border: 1px solid #bae7ff;
+        }
+
+        /* 用户统计信息 */
+        .user-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .exp-info {
+            width: 100%;
+        }
+
+        .exp-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .exp-bar {
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .exp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #3f51b5, #7e57c2);
+            border-radius: 2px;
+        }
+
+        .coins-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: #fff7e6;
+            border-radius: 16px;
+            width: fit-content;
+        }
+
+        .coins-info i {
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .coins-text {
+            font-size: 13px;
+            color: #ff4d4f;
+            font-weight: 500;
+        }
+
+        /* 用户操作容器样式优化 */
+        .user-action-container {
+            margin-top: 56px;
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .user-info {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .user-avatar-wrap {
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 28px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-details {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name-wrap {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .user-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* 用户等级和VIP样式 */
+        .user-level, .vip-level {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* 用户统计信息 */
+        .user-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .exp-bar-wrap {
+            width: 100%;
+        }
+
+        .exp-text {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .exp-bar {
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .exp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #3f51b5, #7e57c2);
+            border-radius: 2px;
+        }
+
+        .coins-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .coins-info i {
+            color: #ffd700;
+        }
+
+        .coins-text {
+            color: #ff4d4f;
+            font-weight: 500;
+        }
+
+        /* 操作按钮样式 */
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 16px;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            padding: 8px 0;
+            cursor: pointer;
+        }
+
+        .action-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        /* 不同按钮的图标样式 */
+        .action-icon.sign {
+            background: linear-gradient(135deg, #ff6b6b, #ffa07a);
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+        }
+
+        .action-icon.shop {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            box-shadow: 0 4px 10px rgba(79, 172, 254, 0.2);
+        }
+
+        .action-icon.post {
+            background: linear-gradient(135deg, #7f7fd5, #91eae4);
+            box-shadow: 0 4px 10px rgba(127, 127, 213, 0.2);
+        }
+
+        .action-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .action-text span {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .action-text small {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .action-divider {
+            width: 1px;
+            height: 40px;
+            background: #f0f0f0;
+            margin: 0 12px;
+            align-self: center;
+        }
+
+        /* 按钮悬浮和点击效果 */
+        .action-btn:hover .action-icon {
+            transform: translateY(-2px);
+        }
+
+        .action-btn:active .action-icon {
+            transform: scale(0.95);
+        }
+
+        /* 签到弹窗样式优化 */
+        .sign-in-header {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sign-in-header h3 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            font-size: 20px;
+            color: white;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .sign-in-status {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            margin: 20px;
+        }
+
+        .continuous-days, .today-date {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .days-number, .date-number {
+            font-size: 32px;
+            font-weight: bold;
+            color: #3f51b5;
+        }
+
+        .days-text, .date-text {
+            font-size: 14px;
+            color: #666;
+        }
+
+        /* 修改签到按钮样式 */
+        .sign-in-btn {
+            width: 80%;
+            padding: 12px;
+            border: none;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            margin: 20px auto;
+            display: block;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sign-in-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 用户信息容器样式优化 */
+        .user-action-container {
+            margin-top: 56px;
+            background: white;
+            padding: 16px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 用户信息区域样式 */
+        .user-info {
+            display: flex;
+            gap: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* 头像样式优化 */
+        .user-avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 32px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            object-fit: cover;
+        }
+
+        /* 用户详情区域样式 */
+        .user-details {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* 用户名和徽章样式 */
+        .user-name-wrap {
+            margin-bottom: 12px;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .user-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* 等级徽章样式优化 */
+        .user-level, .vip-level {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        .user-level.gold {
+            background: linear-gradient(45deg, #fff7e6, #fff0f0);
+            color: #d48806;
+            border: 1px solid #ffd8bf;
+        }
+
+        .vip-level[data-level="3"] {
+            background: linear-gradient(45deg, #e6f7ff, #e6fffb);
+            color: #1890ff;
+            border: 1px solid #bae7ff;
+        }
+
+        /* 用户统计信息样式 */
+        .user-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* 经验值条样式优化 */
+        .exp-info {
+            position: relative;
+        }
+
+        .exp-text {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .exp-bar {
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .exp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #3f51b5, #7e57c2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* 趣玩币信息样式优化 */
+        .coins-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #fff7e6;
+            border-radius: 20px;
+            width: fit-content;
+        }
+
+        .coins-info i {
+            color: #ffd700;
+            font-size: 16px;
+        }
+
+        .coins-text {
+            font-size: 13px;
+            color: #d48806;
+            font-weight: 500;
+        }
+
+        /* 添加动画效果 */
+        .user-avatar {
+            transition: transform 0.3s ease;
+        }
+
+        .user-avatar:active {
+            transform: scale(0.95);
+        }
+
+        .exp-progress {
+            animation: progressFill 1s ease-out;
+        }
+
+        @keyframes progressFill {
+            from { width: 0; }
+            to { width: 60%; }
+        }
+        
+
+        /* 签到状态区域样式 */
+        .sign-in-status {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 24px;
+            margin: 20px;
+            gap: 30px;
+        }
+
+        .continuous-days, .today-date {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 16px;
+            min-width: 120px;
+        }
+
+        .days-number {
+            font-size: 36px;
+            font-weight: bold;
+            color: #3f51b5;
+        }
+
+        .date-number {
+            font-size: 24px;
+            font-weight: 500;
+            color: #3f51b5;
+        }
+
+        .days-text, .date-text {
+            font-size: 14px;
+            color: #666;
+            white-space: nowrap;
+        }
+
+        /* 奖励预览样式 */
+        .rewards-preview {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 0 20px 24px 20px;
+        }
+
+        .reward-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-bottom: 1px solid #eef0ff;
+        }
+
+        .reward-item:last-child {
+            border-bottom: none;
+        }
+
+        .reward-item i {
+            font-size: 24px;
+            color: #3f51b5;
+        }
+
+        .reward-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .reward-name {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .reward-value {
+            font-size: 16px;
+            color: #3f51b5;
+            font-weight: 500;
+        }
+
+        .vip-reward {
+            background: linear-gradient(135deg, #fff7e6, #fff0f0);
+        }
+
+        .vip-reward i {
+            color: #ffd700;
+        }
+
+        /* 用户信息卡片样式 */
+        .user-info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .user-basic {
+            display: flex;
+            gap: 16px;
+        }
+
+        .avatar-wrap {
+            flex-shrink: 0;
+        }
+
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 32px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .user-header {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .user-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .user-progress {
+            margin: 4px 0;
+        }
+
+        .exp-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .exp-text {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .exp-bar {
+            height: 4px;
+            background: #f0f0f0;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .exp-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #3f51b5, #7e57c2);
+            border-radius: 2px;
+        }
+
+        .user-assets {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .coins-info {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #fff7e6;
+            border-radius: 16px;
+        }
+
+        .coins-info i {
+            color: #ffd700;
+            font-size: 14px;
+        }
+
+        .coins-text {
+            font-size: 13px;
+            color: #ff4d4f;
+            font-weight: 500;
+        }
+
+        .backpack-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .backpack-btn:active {
+            transform: scale(0.95);
+        }
+
+        .backpack-btn i {
+            font-size: 14px;
+        }
+
+        .backpack-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 1000;
+        }
+
+        .backpack-content {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            max-height: 80vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease;
+        }
+
+        .backpack-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .backpack-header h3 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .backpack-tabs {
+            display: flex;
+            padding: 12px 16px;
+            gap: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            overflow-x: auto;
+        }
+
+        .backpack-tabs .tab {
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .backpack-tabs .tab.active {
+            background: #3f51b5;
+            color: white;
+        }
+
+        .backpack-items {
+            padding: 16px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .backpack-item {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .backpack-item:active {
+            transform: scale(0.95);
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            margin: 0 auto 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #3f51b5;
+        }
+
+        .item-name {
+            font-size: 13px;
+            color: #333;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* 发帖弹窗样式优化 */
+        .post-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            z-index: 1000;
+        }
+
+        .post-form {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 20px 20px 0 0;
+            padding: 0;
+            animation: slideUp 0.3s ease;
+        }
+
+        .post-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-header h3 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .post-header .close-btn {
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .post-textarea {
+            width: 100%;
+            height: 150px;
+            border: none;
+            resize: none;
+            font-size: 16px;
+            padding: 16px;
+            outline: none;
+        }
+
+        .post-tools {
+            padding: 12px 16px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+        }
+
+        .tool-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .tool-btn {
+            color: #666;
+            font-size: 20px;
+            background: none;
+            border: none;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tool-btn:active {
+            transform: scale(0.9);
+            color: #3f51b5;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            border: none;
+            padding: 8px 24px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:active {
+            transform: scale(0.95);
+            opacity: 0.9;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        /* 修改背包弹窗的HTML结构 */
+        .backpack-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .backpack-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 360px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            animation: scaleIn 0.3s ease;
+        }
+
+        .backpack-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .backpack-header h3 {
+            font-size: 18px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .backpack-header .close-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            color: #999;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .backpack-tabs {
+            display: flex;
+            padding: 12px 16px;
+            gap: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            background: white;
+        }
+
+        .backpack-tabs .tab {
+            padding: 6px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .backpack-tabs .tab.active {
+            background: #3f51b5;
+            color: white;
+        }
+
+        .backpack-items {
+            padding: 16px;
+            overflow-y: auto;
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .empty-tip {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #999;
+            padding: 32px 0;
+            font-size: 14px;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* 操作按钮容器样式 */
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            margin-top: 16px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .action-btn {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            background: none;
+            border: none;
+            padding: 8px 0;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        /* 不同按钮的图标样式 */
+        .action-icon.sign {
+            background: linear-gradient(135deg, #ff6b6b, #ffa07a);
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.2);
+        }
+
+        .action-icon.shop {
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            box-shadow: 0 4px 10px rgba(79, 172, 254, 0.2);
+        }
+
+        .action-icon.post {
+            background: linear-gradient(135deg, #7f7fd5, #91eae4);
+            box-shadow: 0 4px 10px rgba(127, 127, 213, 0.2);
+        }
+
+        .action-icon i {
+            font-size: 20px;
+            color: white;
+        }
+
+        .action-text {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .action-text span {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .action-text small {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .action-divider {
+            width: 1px;
+            height: 40px;
+            background: #f0f0f0;
+            margin: 0 12px;
+            align-self: center;
+        }
+
+        /* 按钮悬浮和点击效果 */
+        .action-btn:hover .action-icon {
+            transform: translateY(-2px);
+        }
+
+        .action-btn:active .action-icon {
+            transform: scale(0.95);
+        }
+
+        .sign-success-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .success-content {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            width: 90%;
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .post-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .post-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 400px;
+            overflow: hidden;
+        }
+
+        .post-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-body {
+            padding: 16px;
+        }
+
+        .post-textarea {
+            width: 100%;
+            height: 150px;
+            border: none;
+            resize: none;
+            font-size: 16px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+
+        .post-tools {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tool-buttons {
+            display: flex;
+            gap: 16px;
+        }
+
+        .tool-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            color: #666;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+        }
+
+        .tool-btn i {
+            font-size: 20px;
+        }
+
+        .tool-btn span {
+            font-size: 12px;
+        }
+
+        .submit-btn {
+            padding: 8px 24px;
+            border: none;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* 帖子用户信息样式优化 */
+        .post-user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .post-user-info .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .user-name-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 4px;
+        }
+
+        .user-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .user-level, .vip-level {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .user-level.gold {
+            background: linear-gradient(45deg, #fff7e6, #fff0f0);
+            color: #d48806;
+            border: 1px solid #ffd8bf;
+        }
+
+        .vip-level[data-level="3"] {
+            background: linear-gradient(45deg, #e6f7ff, #e6fffb);
+            color: #1890ff;
+            border: 1px solid #bae7ff;
+        }
+
+        .post-time {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* 头像容器样式 */
+        .avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 背包图标按钮样式 */
+        .backpack-icon-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(63, 81, 181, 0.2);
+        }
+
+        .backpack-icon-btn i {
+            font-size: 16px;
+        }
+
+        .backpack-icon-btn:active {
+            transform: scale(0.9);
+            box-shadow: 0 1px 4px rgba(63, 81, 181, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <a href="index.html" class="back-btn">
+                <i class="fas fa-chevron-left"></i>
+            </a>
+            <h1 class="header-title">趣玩星球论坛</h1>
+        </div>
+    </div>
+
+    <div class="user-action-container">
+        <div class="user-info-card">
+            <div class="user-basic">
+                <div class="avatar-wrap">
+                    <img src="https://s1.imagehub.cc/images/2024/03/11/default_avatar.jpeg" alt="用户头像" class="user-avatar">
+                    <button class="backpack-icon-btn" onclick="showBackpack()">
+                        <i class="fas fa-shopping-bag"></i>
+                    </button>
+                </div>
+                <div class="user-main">
+                    <div class="user-header">
+                        <div class="user-name-badges">
+                            <span class="user-name">小美</span>
+                            <div class="user-badges">
+                                <span class="user-level gold">趣玩黄金会员</span>
+                                <span class="vip-level" data-level="3">VIP3</span>
+                            </div>
+                        </div>
+                        <div class="user-stats">
+                            <div class="exp-info">
+                                <div class="exp-text">经验值：1280/2000</div>
+                                <div class="exp-bar">
+                                    <div class="exp-progress" style="width: 60%;"></div>
+                                </div>
+                            </div>
+                            <div class="coins-info">
+                                <i class="fas fa-coins"></i>
+                                <span class="coins-text">趣玩币：1280</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn" onclick="showSignInModal()">
+                <div class="action-icon sign">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <div class="action-text">
+                    <span>签到</span>
+                    <small>领取奖励</small>
+                </div>
+            </button>
+            <div class="action-divider"></div>
+            <a href="shop.html" class="action-btn">
+                <div class="action-icon shop">
+                    <i class="fas fa-store"></i>
+                </div>
+                <div class="action-text">
+                    <span>商城</span>
+                    <small>趣玩商店</small>
+                </div>
+            </a>
+            <div class="action-divider"></div>
+            <button class="action-btn" onclick="showPostModal()">
+                <div class="action-icon post">
+                    <i class="fas fa-pen"></i>
+                </div>
+                <div class="action-text">
+                    <span>发帖</span>
+                    <small>分享动态</small>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- 示例帖子 -->
+        <div class="post-card">
+            <div class="post-header">
+                <div class="post-user-info">
+                    <img src="https://s1.imagehub.cc/images/2024/03/11/default_avatar.jpeg" alt="用户头像" class="user-avatar">
+                    <div class="user-info">
+                        <div class="user-name-row">
+                            <span class="user-name">小美</span>
+                            <span class="user-level gold">趣玩黄金会员</span>
+                            <span class="vip-level" data-level="3">VIP3</span>
+                        </div>
+                        <div class="post-time">
+                            <i class="far fa-clock"></i>
+                            <span>2分钟前</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="post-content">
+                今天和小伙伴一起去打王者，遇到超级有趣的队友，一起打了好几��都赢了！开心！😊
+            </div>
+            <div class="post-images">
+                <div class="post-image">
+                    <img src="https://s1.imagehub.cc/images/2024/03/11/game1.jpeg" alt="游戏截图">
+                </div>
+                <div class="post-image">
+                    <img src="https://s1.imagehub.cc/images/2024/03/11/game2.jpeg" alt="游戏截图">
+                </div>
+            </div>
+            <div class="post-footer">
+                <button class="action-btn" onclick="toggleLike(this)">
+                    <i class="far fa-heart"></i>
+                    <span>点赞</span>
+                </button>
+                <button class="action-btn">
+                    <i class="far fa-comment"></i>
+                    <span>评论</span>
+                </button>
+                <button class="action-btn">
+                    <i class="far fa-share-square"></i>
+                    <span>分享</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 发帖弹窗 -->
+    <div class="post-modal" id="postModal">
+        <div class="post-content">
+            <div class="post-header">
+                <h3>发布动态</h3>
+                <i class="fas fa-times close-btn" onclick="closePostModal()"></i>
+            </div>
+            <div class="post-body">
+                <textarea class="post-textarea" placeholder="分享你的趣事..."></textarea>
+                <div class="post-tools">
+                    <div class="tool-buttons">
+                        <button class="tool-btn" onclick="showImageUpload()">
+                            <i class="fas fa-image"></i>
+                            <span>图片</span>
+                        </button>
+                        <button class="tool-btn" onclick="showTopicSelector()">
+                            <i class="fas fa-hashtag"></i>
+                            <span>话题</span>
+                        </button>
+                        <button class="tool-btn" onclick="showUserSelector()">
+                            <i class="fas fa-at"></i>
+                            <span>好友</span>
+                        </button>
+                    </div>
+                    <button class="submit-btn" onclick="submitPost()">发布</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="nav-bar">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>首页</span>
+        </a>
+        <a href="#fun" class="nav-item">
+            <i class="fas fa-compass"></i>
+            <span>玩乐</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <i class="fas fa-comments"></i>
+            <span>论坛</span>
+        </a>
+        <a href="kefuzhongxin.html" class="nav-item">
+            <i class="fas fa-comment-dots"></i>
+            <span>聊天</span>
+        </a>
+        <a href="#profile" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>我的</span>
+        </a>
+    </div>
+
+    <!-- 添加签到弹窗 -->
+    <div class="sign-in-modal" id="signInModal">
+        <div class="sign-in-content">
+            <div class="sign-in-header">
+                <h3>每日签到</h3>
+                <i class="fas fa-times close-btn" onclick="closeSignInModal()"></i>
+            </div>
+            <div class="sign-in-body">
+                <div class="sign-in-status">
+                    <div class="continuous-days">
+                        <span class="days-number">3</span>
+                        <span class="days-text">连续���到天数</span>
+                    </div>
+                    <div class="today-date">
+                        <div class="date-text">今日日期</div>
+                        <div class="date-number">2024-03-15</div>
+                    </div>
+                </div>
+                <div class="rewards-preview">
+                    <div class="reward-item">
+                        <i class="fas fa-star"></i>
+                        <div class="reward-info">
+                            <span class="reward-name">经验值</span>
+                            <span class="reward-value">+20</span>
+                        </div>
+                    </div>
+                    <div class="reward-item">
+                        <i class="fas fa-coins"></i>
+                        <div class="reward-info">
+                            <span class="reward-name">趣玩币</span>
+                            <span class="reward-value">+5</span>
+                        </div>
+                    </div>
+                    <div class="reward-item vip-reward">
+                        <i class="fas fa-crown"></i>
+                        <div class="reward-info">
+                            <span class="reward-name">VIP奖励</span>
+                            <span class="reward-value">+10</span>
+                        </div>
+                    </div>
+                </div>
+                <button class="sign-in-btn" onclick="doSignIn()">立即签到</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加签到功弹窗 -->
+    <div class="sign-success-modal" id="signSuccessModal">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>签到成功</h3>
+            <div class="rewards-list">
+                <div class="reward-item">
+                    <i class="fas fa-star"></i>
+                    <span>经验值 +10</span>
+                </div>
+                <div class="reward-item">
+                    <i class="fas fa-coins"></i>
+                    <span>趣玩币 +5</span>
+                </div>
+                <div class="reward-item vip-bonus">
+                    <i class="fas fa-crown"></i>
+                    <span>VIP奖励</span>
+                    <div class="vip-bonus-details">
+                        <span>经验值 +5</span>
+                        <span>趣玩币 +2</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="confirm-btn" onclick="closeSignSuccessModal()">确定</button>
+                <button class="close-btn" onclick="closeSignSuccessModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加会员开窗 -->
+    <div class="vip-modal" id="vipModal">
+        <div class="vip-content">
+            <h3>开通会员</h3>
+            <div class="vip-levels">
+                <div class="vip-level-item" onclick="selectVipLevel(1)">
+                    <div class="vip-icon">VIP1</div>
+                    <div class="vip-price">￥30/月</div>
+                    <ul class="vip-benefits">
+                        <li>专属头像框</li>
+                        <li>发帖特效</li>
+                    </ul>
+                </div>
+                <!-- 更多VIP等级选项 -->
+            </div>
+            <button class="vip-confirm" onclick="purchaseVip()">确认开通</button>
+        </div>
+    </div>
+
+    <!-- 添加背包弹窗 -->
+    <div class="backpack-modal" id="backpackModal">
+        <div class="backpack-content">
+            <div class="backpack-header">
+                <h3>我的背包</h3>
+                <button class="close-btn" onclick="closeBackpack()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="backpack-tabs">
+                <span class="tab active" onclick="switchBackpackTab(0)">表情</span>
+                <span class="tab" onclick="switchBackpackTab(1)">称号</span>
+                <span class="tab" onclick="switchBackpackTab(2)">特效</span>
+                <span class="tab" onclick="switchBackpackTab(3)">礼物</span>
+            </div>
+            <div class="backpack-items" id="backpackItems">
+                <!-- 物品将通过JavaScript动态添加 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 用户状态对象
+        let userStats = {
+            exp: 1280,
+            vipExp: 800,
+            continuousSignIn: 3,
+            vipLevel: 2,
+            isVip: true,
+            coins: 1280,
+            lastSignInDate: localStorage.getItem('lastSignInDate') || ''
+        };
+
+        // 背包数据
+        const backpackItems = {
+            emojis: [],
+            titles: [],
+            effects: [],
+            gifts: []
+        };
+
+        // 页面加载时的初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSignInStatus();
+            updateUserInfo();
+        });
+
+        // 检查签到状态
+        function checkSignInStatus() {
+            const today = new Date().toLocaleDateString();
+            const signInBtn = document.querySelector('.sign-in-btn');
+            if (signInBtn && userStats.lastSignInDate === today) {
+                signInBtn.textContent = '今日已签到';
+                signInBtn.disabled = true;
+                signInBtn.style.background = '#f5f5f5';
+                signInBtn.style.color = '#999';
+            }
+        }
+
+        // 更新用户信息
+        function updateUserInfo() {
+            updateExpDisplay();
+            updateCoinsDisplay();
+        }
+
+        // 更新经验值显示
+        function updateExpDisplay() {
+            const expText = document.querySelector('.exp-text');
+            const expProgress = document.querySelector('.exp-progress');
+            if (expText) expText.textContent = `经验值：${userStats.exp}/2000`;
+            if (expProgress) expProgress.style.width = `${(userStats.exp / 2000) * 100}%`;
+        }
+
+        // 更新趣玩币显示
+        function updateCoinsDisplay() {
+            const coinsText = document.querySelector('.coins-text');
+            if (coinsText) coinsText.textContent = `趣玩币：${userStats.coins}`;
+        }
+
+        // 签到相关函数
+        function showSignInModal() {
+            const modal = document.getElementById('signInModal');
+            if (modal) {
+                const today = new Date();
+                const dateStr = today.toLocaleDateString('zh-CN', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit'
+                }).replace(/\//g, '-');
+                
+                const dateNumber = document.querySelector('.date-number');
+                if (dateNumber) dateNumber.textContent = dateStr;
+                
+                modal.style.display = 'flex';
+            }
+        }
+
+        function closeSignInModal() {
+            const modal = document.getElementById('signInModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function doSignIn() {
+            const today = new Date().toLocaleDateString();
+            
+            if (userStats.lastSignInDate === today) {
+                alert('今日已签到，明天再来吧！');
+                return;
+            }
+            
+            // 计算奖励
+            const baseExp = 10;
+            const baseCoins = 5;
+            const continuousBonus = Math.floor(userStats.continuousSignIn / 7) * 5;
+            const vipBonus = userStats.isVip ? (userStats.vipLevel * 5) : 0;
+            const vipCoinsBonus = userStats.isVip ? (userStats.vipLevel * 2) : 0;
+            
+            const totalExp = baseExp + continuousBonus + vipBonus;
+            const totalCoins = baseCoins + vipCoinsBonus;
+            
+            // 更����用户状态
+            userStats.exp += totalExp;
+            userStats.coins += totalCoins;
+            userStats.continuousSignIn += 1;
+            userStats.lastSignInDate = today;
+            
+            // 保存签到日期
+            localStorage.setItem('lastSignInDate', today);
+            
+            // 关闭签到弹窗，显示成功弹窗
+            closeSignInModal();
+            showSignSuccessModal(totalExp, totalCoins, vipBonus, vipCoinsBonus);
+            
+            // 更新显��
+            updateUserInfo();
+            checkSignInStatus();
+        }
+
+        // 显示签到成功弹窗
+        function showSignSuccessModal(exp, coins, vipExp, vipCoins) {
+            const modal = document.getElementById('signSuccessModal');
+            if (modal) {
+                modal.style.display = 'flex';
+            }
+        }
+
+        // 关闭签到成功弹窗
+        function closeSignSuccessModal() {
+            const modal = document.getElementById('signSuccessModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // 背包相关函数
+        function showBackpack() {
+            const modal = document.getElementById('backpackModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                renderBackpackItems(0); // 默认显示表情标签页
+            }
+        }
+
+        function closeBackpack() {
+            const modal = document.getElementById('backpackModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        function switchBackpackTab(index) {
+            document.querySelectorAll('.backpack-tabs .tab').forEach((tab, i) => {
+                tab.classList.toggle('active', i === index);
+            });
+            renderBackpackItems(index);
+        }
+
+        // 点击遮罩层关闭背包弹窗
+        document.getElementById('backpackModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeBackpack();
+            }
+        });
+
+        // 发帖相关函数
+        function showPostModal() {
+            const modal = document.getElementById('postModal');
+            if (modal) modal.style.display = 'flex';
+        }
+
+        function closePostModal() {
+            const modal = document.getElementById('postModal');
+            if (modal) modal.style.display = 'none';
+        }
+
+        // 点赞功能
+        function toggleLike(btn) {
+            if (btn) {
+                btn.classList.toggle('liked');
+                const icon = btn.querySelector('i');
+                if (icon) {
+                    if (btn.classList.contains('liked')) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                    } else {
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                    }
+                }
+            }
+        }
+
+        // 初始化事件监听
+        document.addEventListener('DOMContentLoaded', function() {
+            // 点击遮罩层关闭弹窗
+            const modals = document.querySelectorAll('.sign-in-modal, .backpack-modal, .post-modal');
+            modals.forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // VIP功能
+        function showVipModal() {
+            document.getElementById('vipModal').style.display = 'flex';
+        }
+
+        function selectVipLevel(level) {
+            // 处理VIP等级选择
+            document.querySelectorAll('.vip-level-item').forEach(item => {
+                item.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+        }
+
+        function purchaseVip() {
+            alert('VIP开通成功！');
+            document.getElementById('vipModal').style.display = 'none';
+        }
+
+        // 更新VIP等级函数
+        function updateVipLevel() {
+            const vipElement = document.querySelector('.vip-level');
+            if (vipElement) {
+                vipElement.textContent = `VIP${userStats.vipLevel}`;
+                vipElement.setAttribute('data-level', userStats.vipLevel);
+            }
+        }
+
+        // 修改VIP购买函数
+        function purchaseVip() {
+            alert('VIP开通成功！');
+            document.getElementById('vipModal').style.display = 'none';
+        }
+
+        // 生成VIP等级选项
+        function generateVipLevels() {
+            const vipLevelsContainer = document.querySelector('.vip-levels');
+            vipLevelsContainer.innerHTML = '';
+
+            Object.entries(vipConfig).forEach(([level, config]) => {
+                const levelNumber = level.slice(3);
+                const vipItem = `
+                    <div class="vip-level-item" data-level="${levelNumber}" onclick="selectVipLevel(${levelNumber})">
+                        <div class="vip-icon" style="color: ${config.color}">${level}</div>
+                        <div class="vip-price">￥${config.price}</div>
+                        <ul class="vip-benefits">
+                            ${config.benefits.map(benefit => `<li>${benefit}</li>`).join('')}
+                        </ul>
+                    </div>
+                `;
+                vipLevelsContainer.insertAdjacentHTML('beforeend', vipItem);
+            });
+        }
+
+        // 渲染背包物品
+        function renderBackpackItems(tabIndex) {
+            const itemsContainer = document.getElementById('backpackItems');
+            const categories = ['emojis', 'titles', 'effects', 'gifts'];
+            const items = backpackItems[categories[tabIndex]];
+            
+            itemsContainer.innerHTML = items.length ? items.map(item => `
+                <div class="backpack-item" onclick="useItem('${item.id}', '${categories[tabIndex]}')">
+                    <div class="item-icon">
+                        <i class="${item.icon}"></i>
+                    </div>
+                    <div class="item-name">${item.name}</div>
+                </div>
+            `).join('') : '<div class="empty-tip">暂无物品</div>';
+        }
+
+        // 购买物品时添加到背包
+        function addToBackpack(item) {
+            const categoryMap = {
+                'emoji_pack': 'emojis',
+                'title_card': 'titles',
+                'post_style': 'effects',
+                'gift_card': 'gifts'
+            };
+            
+            const category = categoryMap[item.id];
+            if (category) {
+                backpackItems[category].push(item);
+                // 可以添加提示：物品已添加到背包
+            }
+        }
+
+        // 使用物品
+        function useItem(itemId, category) {
+            // 根据不同型的物品实现不同的使用效果
+            alert(`使用了 ${itemId}`);
+        }
+
+        // 修改购买函数，加到背包
+        function purchaseItem(itemId, price) {
+            if (userStats.coins >= price) {
+                userStats.coins -= price;
+                updateCoinsDisplay();
+                
+                // 创建物品对象并添加到背包
+                const item = {
+                    id: itemId,
+                    name: getItemName(itemId),
+                    icon: getItemIcon(itemId),
+                    purchaseTime: new Date().toISOString()
+                };
+                
+                addToBackpack(item);
+                showSuccessModal();
+            } else {
+                showErrorModal();
+            }
+        }
+
+        // 获取物品名称
+        function getItemName(itemId) {
+            const names = {
+                'emoji_pack': '表情包',
+                'title_card': '称号卡',
+                'post_style': '发帖特效',
+                'gift_card': '礼物卡'
+            };
+            return names[itemId] || '未知物品';
+        }
+
+        // 获取物品图标
+        function getItemIcon(itemId) {
+            const icons = {
+                'emoji_pack': 'far fa-laugh-beam',
+                'title_card': 'fas fa-certificate',
+                'post_style': 'fas fa-magic',
+                'gift_card': 'fas fa-gift'
+            };
+            return icons[itemId] || 'fas fa-question';
+        }
+
+        // 提交帖子
+        function submitPost() {
+            // 发帖逻辑
+            const content = document.querySelector('.post-textarea').value;
+            if (content.trim()) {
+                // 处理发帖
+                closePostModal();
+                document.querySelector('.post-textarea').value = '';
+            } else {
+                alert('请输入内容');
+            }
+        }
+    </script>
+</body>
+</html> 

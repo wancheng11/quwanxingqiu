@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>个人中心</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft Yahei", sans-serif;
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        /* 用户信息卡片 */
+        .user-card {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            padding: 24px 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .avatar-wrap {
+            position: relative;
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 35px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .vip-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            background: #ffd700;
+            color: #333;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-weight: 500;
+        }
+
+        .user-details {
+            flex: 1;
+        }
+
+        .user-name {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .user-badges {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-stats {
+            display: flex;
+            gap: 16px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* 功能菜单 */
+        .menu-section {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .menu-title {
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            padding: 16px;
+            gap: 16px;
+        }
+
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .menu-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+        }
+
+        .menu-name {
+            font-size: 13px;
+        }
+
+        /* 列表菜单 */
+        .list-menu {
+            background: white;
+            margin: 12px;
+            border-radius: 12px;
+        }
+
+        .menu-item-row {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            text-decoration: none;
+            color: #333;
+            position: relative;
+        }
+
+        .menu-item-row:not(:last-child) {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+            margin-right: 12px;
+        }
+
+        .item-content {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 15px;
+            margin-bottom: 2px;
+        }
+
+        .item-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .item-arrow {
+            color: #999;
+            font-size: 14px;
+        }
+
+        /* 底部导航栏 */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            text-decoration: none;
+            font-size: 12px;
+            gap: 4px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: #3f51b5;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .menu-item:active .menu-icon {
+            transform: scale(0.95);
+        }
+
+        .menu-item-row:active {
+            background: #f9f9f9;
+        }
+
+        /* 订单列表样式 */
+        .orders-section {
+            margin: 16px;
+            margin-bottom: 80px; /* 为底部导航栏留出空间 */
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #3f51b5;
+        }
+
+        .orders-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .order-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .order-id {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .order-status {
+            font-size: 13px;
+            color: #52c41a;
+            font-weight: 500;
+        }
+
+        .order-content {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .order-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .order-details {
+            flex: 1;
+        }
+
+        .order-product {
+            font-size: 15px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .order-spec {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+
+        .order-price {
+            color: #ff4d4f;
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .order-price i {
+            font-size: 14px;
+            color: #ffd700;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .order-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .order-detail-btn {
+            padding: 6px 12px;
+            border: 1px solid #3f51b5;
+            border-radius: 16px;
+            background: white;
+            color: #3f51b5;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .order-detail-btn:active {
+            background: #f0f2ff;
+            transform: scale(0.98);
+        }
+
+        .empty-tip {
+            text-align: center;
+            color: #999;
+            padding: 32px 0;
+            font-size: 14px;
+        }
+
+        .orders-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .orders-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .orders-header {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .orders-header h3 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .close-btn {
+            border: none;
+            background: none;
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+            padding: 4px;
+        }
+
+        .orders-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .order-item {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .order-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 添加弹窗动画 */
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .orders-content {
+            animation: modalFadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- 修改个人中心页面的结构，添加订单列表部分 -->
+    <div class="container">
+        <!-- 用户信息卡片 -->
+        <div class="user-card">
+            <div class="user-info">
+                <div class="avatar-wrap">
+                    <img src="https://s1.imagehub.cc/images/2024/03/11/default_avatar.jpeg" alt="用户头像" class="user-avatar">
+                    <span class="vip-badge">VIP3</span>
+                </div>
+                <div class="user-details">
+                    <div class="user-name">小美</div>
+                    <div class="user-badges">
+                        <span class="badge">趣玩黄金会员</span>
+                        <span class="badge">Lv.25</span>
+                    </div>
+                    <div class="user-stats">
+                        <div class="stat-item">
+                            <div class="stat-value">1280</div>
+                            <div class="stat-label">趣玩币</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">38</div>
+                            <div class="stat-label">关注</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">128</div>
+                            <div class="stat-label">粉丝</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 快捷功能区 -->
+        <div class="menu-section">
+            <div class="menu-title">我的服务</div>
+            <div class="menu-grid">
+                <a href="#wallet" class="menu-item">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #ff9800, #ff5722);">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <span class="menu-name">钱包</span>
+                </a>
+                <div class="menu-item" onclick="showOrdersModal()">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #4CAF50, #8BC34A);">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <span class="menu-name">订单</span>
+                </div>
+                <a href="#vip" class="menu-item">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #FFC107, #FFB300);">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                    <span class="menu-name">会员</span>
+                </a>
+                <a href="#recharge" class="menu-item">
+                    <div class="menu-icon" style="background: linear-gradient(135deg, #E91E63, #FF4081);">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <span class="menu-name">充值</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- 添加订单弹窗 -->
+        <div class="orders-modal" id="ordersModal">
+            <div class="orders-content">
+                <div class="orders-header">
+                    <h3>我的订单</h3>
+                    <button class="close-btn" onclick="closeOrdersModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="orders-list" id="ordersList">
+                    <!-- 订单列表将通过JavaScript动态加载 -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 列表菜单 -->
+        <div class="list-menu">
+            <a href="#settings" class="menu-item-row">
+                <div class="item-icon" style="background: linear-gradient(135deg, #00BCD4, #03A9F4);">
+                    <i class="fas fa-cog"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">账号设置</div>
+                    <div class="item-desc">安全中心、隐私设置</div>
+                </div>
+                <i class="fas fa-chevron-right item-arrow"></i>
+            </a>
+            <a href="#customer-service" class="menu-item-row">
+                <div class="item-icon" style="background: linear-gradient(135deg, #9C27B0, #673AB7);">
+                    <i class="fas fa-headset"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">客服中心</div>
+                    <div class="item-desc">问题反馈、联系客服</div>
+                </div>
+                <i class="fas fa-chevron-right item-arrow"></i>
+            </a>
+            <a href="#about" class="menu-item-row">
+                <div class="item-icon" style="background: linear-gradient(135deg, #607D8B, #455A64);">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <div class="item-content">
+                    <div class="item-title">关于我们</div>
+                    <div class="item-desc">版本信息、用户协议</div>
+                </div>
+                <i class="fas fa-chevron-right item-arrow"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="nav-bar">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>首页</span>
+        </a>
+        <a href="#fun" class="nav-item">
+            <i class="fas fa-compass"></i>
+            <span>玩乐</span>
+        </a>
+        <a href="forum.html" class="nav-item">
+            <i class="fas fa-comments"></i>
+            <span>论坛</span>
+        </a>
+        <a href="kefuzhongxin.html" class="nav-item">
+            <i class="fas fa-comment-dots"></i>
+            <span>聊天</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <i class="fas fa-user"></i>
+            <span>我的</span>
+        </a>
+    </div>
+
+    <script>
+        // 显示订单弹窗
+        function showOrdersModal() {
+            const modal = document.getElementById('ordersModal');
+            modal.style.display = 'flex';
+            loadOrders();
+        }
+
+        // 关闭订单弹窗
+        function closeOrdersModal() {
+            document.getElementById('ordersModal').style.display = 'none';
+        }
+
+        // 加载订单列表
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const ordersList = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                ordersList.innerHTML = '<div class="empty-tip">暂无订单</div>';
+            } else {
+                ordersList.innerHTML = orders.map(order => `
+                    <div class="order-item" onclick="location.href='order_detail.html?orderId=${order.id}'">
+                        <div class="order-header">
+                            <span class="order-id">订单号：${order.id}</span>
+                            <span class="order-status">${order.status === 'paid' ? '已支付' : '待支付'}</span>
+                        </div>
+                        <div class="order-content">
+                            <img src="${order.image}" alt="${order.productName}" class="order-image">
+                            <div class="order-details">
+                                <div class="order-product">${order.productName}</div>
+                                <div class="order-spec">规格：${order.spec}</div>
+                                <div class="order-price">
+                                    <i class="fas fa-coins"></i>
+                                    <span>${order.price}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="order-footer">
+                            <span class="order-time">${new Date(order.date).toLocaleString()}</span>
+                            <button class="order-detail-btn">查看详情</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // 点击遮罩层关闭弹窗
+        document.getElementById('ordersModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeOrdersModal();
+            }
+        });
+    </script>
+</body>
+</html> 

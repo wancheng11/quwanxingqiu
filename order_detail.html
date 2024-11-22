@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>订单详情</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            padding: 16px;
+            color: white;
+            display: flex;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            margin-right: 16px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .container {
+            padding: 76px 16px 20px;
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .order-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            color: #52c41a;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .order-info {
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .product-info {
+            display: flex;
+            gap: 12px;
+            padding: 16px;
+            background: #f8f9ff;
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .product-spec {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            color: #ff4d4f;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+        }
+
+        .secondary-btn {
+            background: #f0f2ff;
+            color: #3f51b5;
+        }
+
+        .action-btn:active {
+            transform: scale(0.98);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="profile.html" class="back-btn">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h1>订单详情</h1>
+    </div>
+
+    <div class="container">
+        <div class="order-card">
+            <div class="order-status">
+                <i class="fas fa-check-circle"></i>
+                <span>支付成功</span>
+            </div>
+
+            <div class="order-info">
+                <div class="info-row">
+                    <span class="info-label">订单编号</span>
+                    <span class="info-value" id="orderId"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">下单时间</span>
+                    <span class="info-value" id="orderTime"></span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">支付方式</span>
+                    <span class="info-value">趣玩币支付</span>
+                </div>
+            </div>
+
+            <div class="product-info">
+                <img src="" alt="商品图片" class="product-image" id="productImage">
+                <div class="product-details">
+                    <div class="product-name" id="productName"></div>
+                    <div class="product-spec" id="productSpec"></div>
+                    <div class="product-price">
+                        <i class="fas fa-coins"></i>
+                        <span id="productPrice"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn secondary-btn" onclick="contactServiceWithOrder()">
+                    <i class="fas fa-headset"></i>
+                    联系客服
+                </button>
+                <button class="action-btn primary-btn" onclick="goToProduct()">再次购买</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 从URL获取订单ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const orderId = urlParams.get('orderId');
+
+        // 从localStorage获取订单信息
+        function loadOrderDetails() {
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const order = orders.find(o => o.id === orderId);
+            
+            if (order) {
+                // 更新订单信息
+                document.getElementById('orderId').textContent = order.id;
+                document.getElementById('orderTime').textContent = new Date(order.date).toLocaleString();
+                document.getElementById('productName').textContent = order.productName;
+                document.getElementById('productSpec').textContent = `规格：${order.spec}`;
+                document.getElementById('productPrice').textContent = order.price;
+                
+                // 如果有商品图片，更新图片
+                const productImage = document.getElementById('productImage');
+                if (order.image) {
+                    productImage.src = order.image;
+                }
+            }
+        }
+
+        // 联系客服
+        function contactService() {
+            window.location.href = 'kefuzhongxin.html';
+        }
+
+        // 再次购买
+        function goToProduct() {
+            window.location.href = 'product_detail.html';
+        }
+
+        // 添加联系客服函数
+        function contactServiceWithOrder() {
+            const orderId = new URLSearchParams(window.location.search).get('orderId');
+            const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+            const order = orders.find(o => o.id === orderId);
+            
+            if (order) {
+                // 构建统一的订单咨询消息格式
+                const orderMessage = [
+                    '我想咨询订单相关问题：',
+                    `订单号：${order.id}`,
+                    `商品名称：${order.productName}`,
+                    `规格：${order.spec}`,
+                    `订单金额：${order.price}`,
+                    `下单时间：${new Date(order.date).toLocaleString()}`,
+                    `订单状态：${order.status === 'paid' ? '已支付' : '待支付'}`
+                ].join('\n');
+                
+                // 存储订单信息和咨询消息
+                localStorage.setItem('currentServiceOrder', JSON.stringify({
+                    ...order,
+                    consultMessage: orderMessage
+                }));
+                
+                // 跳转到客服页面并标记来源
+                window.location.href = 'kefuzhongxin.html?fromOrder=true&type=orderConsult';
+            }
+        }
+
+        // 页面加载时加载订单详情
+        document.addEventListener('DOMContentLoaded', loadOrderDetails);
+    </script>
+</body>
+</html> 

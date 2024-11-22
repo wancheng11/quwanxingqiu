@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>城市玩乐，让你快乐</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft Yahei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f7f7f7;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            padding: 16px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .header .back-btn {
+            position: absolute;
+            left: 16px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .header .back-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .header h1 {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .container {
+            padding-top: 56px;
+            padding-bottom: 90px;
+            background: #f7f7f7;
+        }
+
+        .activity-banner {
+            width: calc(100% - 32px);
+            height: 160px;
+            object-fit: cover;
+            margin: 16px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .content-section {
+            background: white;
+            margin: 16px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #3f51b5;
+            font-size: 20px;
+        }
+
+        .price-tag {
+            display: inline-block;
+            background: #fff0f0;
+            color: #ff4d4f;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+
+        .feature-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .feature-item i {
+            color: #3f51b5;
+            font-size: 16px;
+        }
+
+        .description {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .notice-list {
+            background: #fff8f0;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .notice-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .notice-item i {
+            color: #ff9800;
+            margin-top: 4px;
+        }
+
+        .notice-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .fixed-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 12px 16px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 99;
+        }
+
+        .price {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .price-amount {
+            color: #ff4d4f;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .price-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .join-button {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            border-radius: 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(63, 81, 181, 0.2);
+        }
+
+        .join-button:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(63, 81, 181, 0.15);
+        }
+
+        .loading-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3f51b5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="kefuzhongxin.html" class="back-btn">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h1>城市玩乐，让你快乐</h1>
+    </div>
+
+    <div class="container">
+        <img src="https://s1.imagehub.cc/images/2024/11/23/965f92c6765b45946133748f1ec547ab.png" alt="活动banner" class="activity-banner">
+        
+        <div class="content-section">
+            <div class="section-title">
+                <i class="fas fa-gift"></i>
+                活动特惠
+            </div>
+            <div class="price-tag">限时特惠 ¥299起</div>
+            <div class="feature-list">
+                <div class="feature-item">
+                    <i class="fas fa-clock"></i>
+                    <span>活动时间：3小时</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-users"></i>
+                    <span>2-6人同行</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>专业导览</span>
+                </div>
+                <div class="feature-item">
+                    <i class="fas fa-camera"></i>
+                    <span>专业拍摄</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section">
+            <div class="section-title">
+                <i class="fas fa-info-circle"></i>
+                活动详情
+            </div>
+            <div class="description">
+                探索城市之美，体验本地文化，专业导游带您打卡网红景点，享受美食，留下精彩瞬间。活动包含专业摄影服务，为您记录精彩时刻。
+            </div>
+            <div class="notice-list">
+                <div class="notice-item">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>请提前15分钟到达集合地点</span>
+                </div>
+                <div class="notice-item">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>建议穿着舒适的鞋子和衣服</span>
+                </div>
+                <div class="notice-item">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span>活动费用包含：导览、拍摄、小吃品尝</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fixed-bottom">
+        <div class="price">
+            <span class="price-amount">¥299</span>
+            <span class="price-desc">含导览+拍摄</span>
+        </div>
+        <button class="join-button" onclick="joinActivity()">立即参与</button>
+    </div>
+
+    <div class="loading-container" id="loadingContainer">
+        <div class="loading-spinner"></div>
+    </div>
+
+    <script>
+        function hideLoading() {
+            document.getElementById('loadingContainer').style.display = 'none';
+        }
+
+        function joinActivity() {
+            alert('活动报名成功！客服稍后会与您联系，请保持手机畅通。');
+        }
+
+        // 页面加载完成后隐藏加载动画
+        window.addEventListener('load', hideLoading);
+    </script>
+</body>
+</html> 

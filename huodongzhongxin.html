@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>趣玩星球活动中心</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft Yahei", sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f7f7f7;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            padding: 16px;
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+
+        .header .back-btn {
+            position: absolute;
+            left: 16px;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .header h1 {
+            flex: 1;
+            font-size: 18px;
+            font-weight: 500;
+            margin: 0;
+        }
+
+        .container {
+            margin-top: 60px;
+            padding: 16px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .activity-section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .activity-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .activity-content {
+            padding: 16px;
+        }
+
+        .activity-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #333;
+        }
+
+        .activity-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .activity-info i {
+            font-size: 16px;
+            color: #3f51b5;
+            margin-right: 6px;
+        }
+
+        .activity-desc {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .activity-tags {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .activity-tag {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background: #f0f2ff;
+            color: #3f51b5;
+        }
+
+        .activity-status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+        }
+
+        .activity-button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            font-size: 15px;
+            font-weight: 500;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 12px;
+            transition: all 0.3s;
+        }
+
+        .activity-button:active {
+            transform: scale(0.98);
+            opacity: 0.9;
+        }
+
+        .hot-tag {
+            background: #ff4d4f;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-left: 8px;
+        }
+
+        .activity-card {
+            position: relative;
+        }
+
+        .section-title i {
+            font-size: 20px;
+            color: #3f51b5;
+            padding: 8px;
+            border-radius: 10px;
+            background-color: #f0f2ff;
+        }
+
+        .section-title .fa-fire {
+            color: #ff4d4f;
+            animation: flicker 1.5s infinite;
+        }
+
+        .activity-info i {
+            font-size: 16px;
+            color: #3f51b5;
+            margin-right: 6px;
+        }
+
+        .activity-tags .activity-tag {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            background: linear-gradient(135deg, #f0f2ff, #e8eaff);
+            color: #3f51b5;
+            border: 1px solid #e0e3ff;
+            transition: all 0.3s ease;
+        }
+
+        .activity-tags .activity-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 2px 8px rgba(63, 81, 181, 0.1);
+        }
+
+        .activity-button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-button::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes flicker {
+            0%, 100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes shine {
+            0% {
+                left: -50%;
+            }
+            100% {
+                left: 150%;
+            }
+        }
+
+        .activity-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.8));
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .activity-status::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #4CAF50;
+            animation: pulse 1.5s infinite;
+        }
+
+        .activity-status.upcoming::before {
+            background: #FFC107;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .header .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .header .back-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .header .back-btn i {
+            font-size: 14px;
+        }
+
+        .activity-tag i {
+            font-size: 14px;
+            color: #3f51b5;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="kefuzhongxin.html" class="back-btn">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h1>趣玩星球活动中心</h1>
+    </div>
+
+    <div class="container">
+        <div class="activity-section">
+            <div class="section-title">
+                <i class="fas fa-fire"></i>
+                热门活动
+                <span class="hot-tag">HOT</span>
+            </div>
+            <div class="activity-card">
+                <img src="https://s1.imagehub.cc/images/2024/11/23/965f92c6765b45946133748f1ec547ab.png" alt="活动图片" class="activity-image">
+                <div class="activity-status">进行中</div>
+                <div class="activity-content">
+                    <div class="activity-title">趣玩星球最新活动</div>
+                    <div class="activity-info">
+                        <span><i class="fas fa-calendar"></i>2024.03.01-2024.03.31</span>
+                        <span><i class="fas fa-user-friends"></i>2000+人参与</span>
+                    </div>
+                    <div class="activity-desc">
+                        春季特惠活动开启！新用户首单立减50元，老用户下单即可参与抽奖，最高可获得1000元平台代金券！
+                    </div>
+                    <div class="activity-tags">
+                        <span class="activity-tag">
+                            <i class="fas fa-gift"></i>
+                            新人特惠
+                        </span>
+                        <span class="activity-tag">
+                            <i class="fas fa-random"></i>
+                            抽奖活动
+                        </span>
+                        <span class="activity-tag">
+                            <i class="fas fa-clock"></i>
+                            限时优惠
+                        </span>
+                    </div>
+                    <a href="#" class="activity-button">立即参与</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="activity-section">
+            <div class="section-title">
+                <i class="fas fa-gift"></i>
+                限时福利
+            </div>
+            <div class="activity-card">
+                <img src="https://s1.imagehub.cc/images/2024/11/23/f14261903a34b0932998b015a7b5003e.png" alt="活动图片" class="activity-image">
+                <div class="activity-status">即将开始</div>
+                <div class="activity-content">
+                    <div class="activity-title">城市漫游计划</div>
+                    <div class="activity-info">
+                        <span><i class="fas fa-calendar"></i>2024.04.01-2024.04.30</span>
+                        <span><i class="fas fa-user-friends"></i>1000+人预约</span>
+                    </div>
+                    <div class="activity-desc">
+                        春暖花开，一起来场城市冒险！多个城市陪玩套餐特惠，更有机会获得精美周边礼包！
+                    </div>
+                    <div class="activity-tags">
+                        <span class="activity-tag">
+                            <i class="fas fa-compass"></i>
+                            城市探索
+                        </span>
+                        <span class="activity-tag">
+                            <i class="fas fa-percentage"></i>
+                            套餐优惠
+                        </span>
+                        <span class="activity-tag">
+                            <i class="fas fa-gift"></i>
+                            礼品赠送
+                        </span>
+                    </div>
+                    <a href="#" class="activity-button">预约参与</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 

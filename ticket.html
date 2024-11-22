@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>趣玩机票</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft Yahei", sans-serif;
+            background: #f7f7f7;
+            color: #333;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            padding: 16px;
+            color: white;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        /* 搜索卡片 */
+        .search-card {
+            background: white;
+            margin: 76px 16px 16px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        /* 航班类型选择 */
+        .flight-type {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .type-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #666;
+            background: #f5f5f5;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .type-btn.active {
+            background: #3f51b5;
+            color: white;
+        }
+
+        /* 城市选择 */
+        .city-selector {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 12px;
+        }
+
+        .city-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #333;
+            background: #f9f9f9;
+        }
+
+        .switch-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            border-radius: 16px;
+            background: #f0f2ff;
+            color: #3f51b5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .switch-btn:active {
+            transform: rotate(180deg);
+        }
+
+        /* 日期选择 */
+        .date-selector {
+            margin-bottom: 20px;
+        }
+
+        .date-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .date-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            font-size: 16px;
+            color: #333;
+            background: #f9f9f9;
+        }
+
+        /* 乘客和舱位选择 */
+        .passenger-cabin {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .select-box {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            font-size: 14px;
+            color: #333;
+            background: #f9f9f9;
+        }
+
+        /* 搜索按钮 */
+        .search-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #3f51b5, #7e57c2);
+            color: white;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:active {
+            transform: scale(0.98);
+        }
+
+        /* 热门航线 */
+        .hot-routes {
+            margin: 0 16px 16px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #ff4d4f;
+        }
+
+        .route-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .route-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .route-info {
+            flex: 1;
+        }
+
+        .route-cities {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #333;
+        }
+
+        .route-price {
+            color: #ff4d4f;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .route-price small {
+            font-size: 12px;
+            color: #999;
+            font-weight: normal;
+        }
+
+        /* 底部导航栏 */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 56px;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            box-shadow: 0 -1px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            text-decoration: none;
+            font-size: 12px;
+            gap: 4px;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+        }
+
+        .nav-item.active {
+            color: #3f51b5;
+        }
+
+        /* 日历弹窗 */
+        .calendar-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .calendar-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 360px;
+            padding: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .calendar-title {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .calendar-close {
+            font-size: 20px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .calendar-day {
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .calendar-day:hover {
+            background: #f0f2ff;
+        }
+
+        .calendar-day.active {
+            background: #3f51b5;
+            color: white;
+        }
+
+        /* 优惠信息 */
+        .promo-section {
+            margin: 0 16px 16px;
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .promo-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #ff4d4f;
+        }
+
+        .promo-list {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+        }
+
+        .promo-list::-webkit-scrollbar {
+            display: none;
+        }
+
+        .promo-card {
+            flex: 0 0 auto;
+            width: 200px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa07a);
+            border-radius: 12px;
+            padding: 12px;
+            color: white;
+        }
+
+        .promo-card h4 {
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .promo-card p {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="index.html" class="back-btn">
+            <i class="fas fa-chevron-left"></i>
+        </a>
+        <h1 class="header-title">趣玩机票</h1>
+    </div>
+
+    <div class="search-card">
+        <div class="flight-type">
+            <button class="type-btn active">单程</button>
+            <button class="type-btn">往返</button>
+            <button class="type-btn">多程</button>
+        </div>
+
+        <div class="city-selector">
+            <input type="text" class="city-input" placeholder="出发城市" value="北京">
+            <button class="switch-btn">
+                <i class="fas fa-exchange-alt"></i>
+            </button>
+            <input type="text" class="city-input" placeholder="到达城市" value="上海">
+        </div>
+
+        <div class="date-selector">
+            <div class="date-label">出发日期</div>
+            <input type="text" class="date-input" placeholder="选择日期" value="2024-03-15" readonly onclick="showCalendar()">
+        </div>
+
+        <div class="passenger-cabin">
+            <select class="select-box">
+                <option>1成人</option>
+                <option>2成人</option>
+                <option>3成人</option>
+            </select>
+            <select class="select-box">
+                <option>经济舱</option>
+                <option>商务舱</option>
+                <option>头等舱</option>
+            </select>
+        </div>
+
+        <button class="search-btn">搜索航班</button>
+    </div>
+
+    <!-- 优惠信息 -->
+    <div class="promo-section">
+        <div class="promo-title">
+            <i class="fas fa-gift"></i>
+            <span>优惠活动</span>
+        </div>
+        <div class="promo-list">
+            <div class="promo-card">
+                <h4>新人专享</h4>
+                <p>首单立减100元</p>
+            </div>
+            <div class="promo-card" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">
+                <h4>周末特惠</h4>
+                <p>指定航线8折起</p>
+            </div>
+            <div class="promo-card" style="background: linear-gradient(135deg, #7f7fd5, #91eae4);">
+                <h4>商务优选</h4>
+                <p>商务舱85折</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 热门航线 -->
+    <div class="hot-routes">
+        <div class="section-title">
+            <i class="fas fa-fire"></i>
+            热门航线
+        </div>
+        <div class="route-grid">
+            <div class="route-card">
+                <div class="route-info">
+                    <div class="route-cities">北京 - 上海</div>
+                    <div class="route-price">¥520 <small>起</small></div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: #999;"></i>
+            </div>
+            <div class="route-card">
+                <div class="route-info">
+                    <div class="route-cities">北京 - 广州</div>
+                    <div class="route-price">¥780 <small>起</small></div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: #999;"></i>
+            </div>
+            <div class="route-card">
+                <div class="route-info">
+                    <div class="route-cities">上海 - 深圳</div>
+                    <div class="route-price">¥680 <small>起</small></div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: #999;"></i>
+            </div>
+            <div class="route-card">
+                <div class="route-info">
+                    <div class="route-cities">广州 - 成都</div>
+                    <div class="route-price">¥820 <small>起</small></div>
+                </div>
+                <i class="fas fa-chevron-right" style="color: #999;"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部导航栏 -->
+    <div class="nav-bar">
+        <a href="index.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>首页</span>
+        </a>
+        <a href="#" class="nav-item active">
+            <i class="fas fa-compass"></i>
+            <span>玩乐</span>
+        </a>
+        <a href="forum.html" class="nav-item">
+            <i class="fas fa-comments"></i>
+            <span>论坛</span>
+        </a>
+        <a href="kefuzhongxin.html" class="nav-item">
+            <i class="fas fa-comment-dots"></i>
+            <span>聊天</span>
+        </a>
+        <a href="profile.html" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>我的</span>
+        </a>
+    </div>
+
+    <!-- 日历弹窗 -->
+    <div class="calendar-modal" id="calendarModal">
+        <div class="calendar-content">
+            <div class="calendar-header">
+                <div class="calendar-title">选择日期</div>
+                <div class="calendar-close" onclick="closeCalendar()">×</div>
+            </div>
+            <div class="calendar-grid">
+                <!-- 日历内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 航班类型切换
+        document.querySelectorAll('.type-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelector('.type-btn.active').classList.remove('active');
+                this.classList.add('active');
+            });
+        });
+
+        // 城市切换按钮
+        document.querySelector('.switch-btn').addEventListener('click', function() {
+            const inputs = document.querySelectorAll('.city-input');
+            const temp = inputs[0].value;
+            inputs[0].value = inputs[1].value;
+            inputs[1].value = temp;
+        });
+
+        // 日历功能
+        function showCalendar() {
+            document.getElementById('calendarModal').style.display = 'flex';
+            generateCalendar();
+        }
+
+        function closeCalendar() {
+            document.getElementById('calendarModal').style.display = 'none';
+        }
+
+        function generateCalendar() {
+            const grid = document.querySelector('.calendar-grid');
+            grid.innerHTML = '';
+
+            // 添加星期标题
+            const weekdays = ['日', '一', '二', '三', '四', '五', '六'];
+            weekdays.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                grid.appendChild(dayElement);
+            });
+
+            // 生成日期
+            const today = new Date();
+            const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = i;
+                dayElement.onclick = function() {
+                    selectDate(i);
+                };
+                grid.appendChild(dayElement);
+            }
+        }
+
+        function selectDate(day) {
+            const date = new Date();
+            const dateString = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            document.querySelector('.date-input').value = dateString;
+            closeCalendar();
+        }
+
+        // 点击遮罩层关闭日历
+        document.getElementById('calendarModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCalendar();
+            }
+        });
+    </script>
+</body>
+</html> 
